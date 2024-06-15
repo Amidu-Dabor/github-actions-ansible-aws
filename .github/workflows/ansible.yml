@@ -1,0 +1,11 @@
+name: Ansible Deployment
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  ansible-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo test
