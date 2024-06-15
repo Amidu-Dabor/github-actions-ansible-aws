@@ -9,9 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - run: echo test
-    - name: Authenticate to AWS
+    - name: Authenticate to AWS Using OpenID Connect
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-1
-        audience: sts.amazonaws.com
         role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws
