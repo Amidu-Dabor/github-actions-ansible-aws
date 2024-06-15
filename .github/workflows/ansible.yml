@@ -14,4 +14,4 @@ jobs:
       with:
         aws-region: us-east-1
         audience: sts.amazonaws.com
-        role-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws
+        role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws
