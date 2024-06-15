@@ -4,13 +4,17 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   ansible-deploy:
     runs-on: ubuntu-latest
     steps:
-    - run: echo test
-    - name: Authenticate to AWS Using OpenID Connect
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: us-east-1
-        role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws
+      - run: echo test
+      - name: Authenticate to AWS Using OpenID Connect
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws
