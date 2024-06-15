@@ -22,7 +22,7 @@ jobs:
       - name: Install Ansible Galaxy Collection (amazon.aws)
         shell: pwsh
         run: |
-          ansible-galaxy collection install amazon.aws
+          ansible-galaxy collection install amazon.aws --force
           
       - name: Authenticate to AWS Using OpenID Connect
         uses: aws-actions/configure-aws-credentials@v4
