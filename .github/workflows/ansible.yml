@@ -14,6 +14,14 @@ jobs:
     steps:
       - run: echo test
 
+      - name: Cache Multiple Paths to Speedup Workflow Execution Time
+        uses: actions/cache@v4.0.2
+        with:
+          path: |
+            ~/cache
+            !~/cache/axclude
+          key: mygithub-cache-key
+
       - name: Install Ansible Latest
         shell: pwsh
         run: |
