@@ -31,7 +31,6 @@ jobs:
     - name: Import Python Libraries/dependencies (AWS SDKs)
       if: steps.cache-step.outputs.cache-hit == 'true'
       run: |
-         python3
          import boto3
          import botcore
      
