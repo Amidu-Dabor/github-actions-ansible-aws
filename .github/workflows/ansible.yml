@@ -24,11 +24,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-ansible-
 
-    - name: Install Ansible Latest
+    - name: Install Ansible Latest and Python Libraries
       shell: pwsh
       if: steps.cache-step.outputs.cache-hit != 'true'
       run: |
-        pip3 install ansible boto3
+        pip3 install ansible boto3 botocore
 
     - name: Install Ansible Galaxy Collection (amazon.aws)
       shell: pwsh
