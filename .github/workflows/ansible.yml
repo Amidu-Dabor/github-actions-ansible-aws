@@ -12,37 +12,37 @@ jobs:
   ansible-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.7
+    - uses: actions/checkout@v4.1.7
 
-      - name: Cache Multiple Paths to Speedup Workflow Execution Time
-        id: cache-step
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/cache/
-            ~/.ansible/
-          key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-ansible-
+    - name: Cache Multiple Paths to Speedup Workflow Execution Time
+      id: cache-step
+      uses: actions/cache@v4.0.2
+      with:
+        path: |
+          ~/cache/
+          ~/.ansible/
+        key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ansible-
 
-      - name: Install Ansible Latest
-        shell: pwsh
-        if: steps.cache-step.outputs.cache-hit != 'true'
-        run: |
-          pip3 install ansible
+    - name: Install Ansible Latest
+      shell: pwsh
+      if: steps.cache-step.outputs.cache-hit != 'true'
+      run: |
+        pip3 install ansible
 
-      - name: Install Ansible Galaxy Collection (amazon.aws)
-        shell: pwsh
-        if: steps.cache-step.outputs.cache-hit != 'true'
-        run: |
-          ansible-galaxy collection install amazon.aws --force
+    - name: Install Ansible Galaxy Collection (amazon.aws)
+      shell: pwsh
+      if: steps.cache-step.outputs.cache-hit != 'true'
+      run: |
+        ansible-galaxy collection install amazon.aws --force
           
-      - name: Authenticate to AWS Using OpenID Connect
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: us-east-1
-          role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
-      - name: Run Ansible Inventory Command
-        shell: pwsh
-        run: |
-          ansible-inventory --inventory my_inventory.aws.ec2.yml --list
+    - name: Authenticate to AWS Using OpenID Connect
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
+    - name: Run Ansible Inventory Command
+      shell: pwsh
+      run: |
+        ansible-inventory --inventory my_inventory.aws.ec2.yml --list
