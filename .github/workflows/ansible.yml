@@ -28,12 +28,6 @@ jobs:
       run: |
          pip3 install ansible boto3 botocore
 
-    - name: Import Python Libraries/dependencies (AWS SDKs)
-      if: steps.cache-step.outputs.cache-hit == 'true'
-      run: |
-         import boto3
-         import botcore
-     
     - name: Install Ansible Galaxy Collection (amazon.aws)
       if: steps.cache-step.outputs.cache-hit != 'true'
       run: |
