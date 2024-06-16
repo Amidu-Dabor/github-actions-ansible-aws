@@ -48,12 +48,12 @@ jobs:
       #     ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
       #     $ansible_python_interpreter -m pip3 install boto3 botocore
 
-      - name: Debug:List Files for Verification
-        run: |
-          ls -l
-          ls -l ~/cache
-          ls -l ~/.ansible
-          cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
+      # - name: Debug:List Files for Verification
+      #   run: |
+      #     ls -l
+      #     ls -l ~/cache
+      #     ls -l ~/.ansible
+      #     cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
 
       - name: Run Ansible Inventory Command
         run: ansible-inventory --inventory my_inventory.aws_ec2.yml --list
