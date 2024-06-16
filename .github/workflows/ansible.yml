@@ -23,21 +23,30 @@ jobs:
           ~/.ansible/
         key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
 
-    - name: Install Ansible and Python Libraries/dependencies (AWS SDKs)
+    - name: Install Ansible and Python Libraries (AWS SDKs)
       if: steps.cache-step.outputs.cache-hit != 'true'
       run: |
-         pip3 install ansible boto3 botocore
+        pip3 install ansible boto3 botocore
 
     - name: Install Ansible Galaxy Collection (amazon.aws)
       if: steps.cache-step.outputs.cache-hit != 'true'
       run: |
         ansible-galaxy collection install amazon.aws --force
-          
+
     - name: Authenticate to AWS Using OpenID Connect
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-1
         role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
+
+    - name: Verify Ansible Python Interpreter
+      run: |
+        ansible -m setup localhost | grep ansible_python
+
+    - name: Ensure boto3 and botocore are installed in Ansible Python environment
+      run: |
+        ANSIBLE_PYTHON_INTERPRETER=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
+        $ANSIBLE_PYTHON_INTERPRETER -m pip install boto3 botocore
 
     - name: Run Ansible Inventory Command
       run: |
