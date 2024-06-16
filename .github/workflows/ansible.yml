@@ -12,7 +12,7 @@ jobs:
   ansible-deploy:
     runs-on: ubuntu-latest
     steps:
-      - run: echo test
+      - uses: actions/checkout@v4.1.7
 
       - name: Cache Multiple Paths to Speedup Workflow Execution Time
         id: cache-step
