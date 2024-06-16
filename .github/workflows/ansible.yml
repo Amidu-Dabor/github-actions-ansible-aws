@@ -43,10 +43,10 @@ jobs:
       - name: Verify Ansible Python Interpreter
         run: ansible -m setup localhost | grep ansible_python
 
-      - name: Ensure boto3 and botocore are installed in Ansible Python environment
-        run: |
-          ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
-          $ansible_python_interpreter -m pip3 install boto3 botocore
+      # - name: Ensure boto3 and botocore are installed in Ansible Python environment
+      #   run: |
+      #     ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
+      #     $ansible_python_interpreter -m pip3 install boto3 botocore
 
       - name: Debug:List Files for Verification
         run: |
