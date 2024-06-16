@@ -29,7 +29,7 @@ jobs:
       shell: pwsh
       if: steps.cache-step.outputs.cache-hit != 'true'
       run: |
-        pip3 install ansible
+        pip3 install ansible boto3
 
     - name: Install Ansible Galaxy Collection (amazon.aws)
       shell: pwsh
