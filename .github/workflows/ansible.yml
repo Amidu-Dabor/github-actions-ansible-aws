@@ -55,5 +55,5 @@ jobs:
       #     cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
 
       - name: Run Ansible Inventory Command
-        run: ansible-inventory --inventory my_inventory.aws_ec2.yml --list
+        run: ansible-inventory --inventory https://github.com/Amidu-Dabor/github-actions-ansible-aws/blob/2fabd31137d4c2a6e85ef5b00dbebde032085d05/my_inventory.aws_ec2.yml --list
 ...
