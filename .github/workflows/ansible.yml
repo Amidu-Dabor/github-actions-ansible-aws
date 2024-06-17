@@ -57,9 +57,9 @@ jobs:
     - name: Write SSH key to file
       shell: pwsh
       run: |
-        Set-Content -Path mykeyfile -Value '${{ secrets.ANSIBLE_SSH_KEY }}'
+        Set-Content -Path mysshkeyfile -Value '${{ secrets.ANSIBLE_SSH_KEY }}'
 
     - name: Run Ansible Playbook
       shell: pwsh
       run: |
-        ansible-playbook --inventory my_inventory.aws_ec2.yml --private-key mykeyfile ansible-playbook.yml
+        ansible-playbook --inventory my_inventory.aws_ec2.yml --private-key mysshkeyfile ansible-playbook.yml
