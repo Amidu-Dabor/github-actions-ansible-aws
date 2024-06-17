@@ -19,7 +19,7 @@ jobs:
       uses: actions/cache@v4.0.2
       with:
         path: |
-          ~/python3.10/
+          ~/
           ~/.ansible/
         key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
 
@@ -42,7 +42,7 @@ jobs:
     - name: Debug:List Files for Verification
       run: |
         ls -l
-        ls -l ~/python3.10/ || echo "Cache directory not found"
+        ls -l ~/ || echo "Cache directory not found"
         ls -l ~/.ansible/
         cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
 
