@@ -19,14 +19,19 @@ jobs:
       uses: actions/cache@v4.0.2
       with:
         path: |
+          ~/cache/
           ~/.ansible/
-        # ~/cache/
         key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
+
+    - name: Install Python 3.10 and pip
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3.10 python3-pip
 
     - name: Install Ansible and Python Libraries (AWS SDKs)
       if: steps.cache-step.outputs.cache-hit != 'true'
       run: |
-        pip3 install ansible boto3 botocore
+        python3.10 -m pip install ansible boto3 botocore
 
     - name: Install Ansible Galaxy Collection (amazon.aws)
       if: steps.cache-step.outputs.cache-hit != 'true'
