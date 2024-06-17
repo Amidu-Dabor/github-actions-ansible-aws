@@ -5,3 +5,4 @@ regions:
   - us-west-2
 keyed_groups:
   - key: key_name
+    separator: ''
