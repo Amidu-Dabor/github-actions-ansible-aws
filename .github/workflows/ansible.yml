@@ -21,7 +21,8 @@ jobs:
         path: |
           ~/cache/
           ~/.ansible/
-        key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
+        key: mycachekey
+        # ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
 
     - name: Install Ansible and Python Libraries (AWS SDKs)
       if: steps.cache-step.outputs.cache-hit != 'true'
