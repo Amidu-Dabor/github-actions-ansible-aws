@@ -42,8 +42,8 @@ jobs:
     - name: Debug:List Files for Verification
       run: |
         ls -l
-        ls -l ~/cache
-        ls -l ~/.ansible
+        ls -l ~/cache/ || echo "Cache directory not found"
+        ls -l ~/.ansible/
         cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
 
     - name: Run Ansible Inventory Command
