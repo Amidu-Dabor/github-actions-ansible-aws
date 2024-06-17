@@ -67,7 +67,7 @@ jobs:
 
     - name: Debug:Verify SSH Connectivity
       run: |
-        ssh -i AnsibleKey2 ec2-user@54.234.26.80 'echo "SSH connection established"'
+        ssh -i sshkeyfile ec2-user@54.234.26.80 'echo "SSH connection established"'
       # ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
 
     - name: Run Ansible Playbook
