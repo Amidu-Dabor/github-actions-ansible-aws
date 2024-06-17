@@ -69,5 +69,6 @@ jobs:
     - name: Run Ansible Inventory Command
       env:
         ANSIBLE_PYTHON_INTERPRETER: ${{ steps.verify-python-interpreter.outputs.ANSIBLE_PYTHON_INTERPRETER }}
+      shell: pwsh
       run: |
         ansible-inventory --inventory my_inventory.aws_ec2.yml --list
