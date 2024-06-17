@@ -22,6 +22,8 @@ jobs:
           ~/cache/
           ~/.ansible/
         key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
+        # restore-keys: |
+        #   ${{ runner.os }}-ansible-
 
     - name: Install Python 3.10 and pip
       run: |
@@ -46,16 +48,16 @@ jobs:
         role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
 
     - name: Verify Ansible Python Interpreter
-      id: ansible-python-interpreter
+      id: verify-python-interpreter
       run: |
         ansible_python_interpreter=$(ansible -m setup localhost | grep '"ansible_python"' | awk -F '"' '{print $4}')
         echo "Ansible is using Python interpreter: $ansible_python_interpreter"
-        sudo ln -sf $ansible_python_interpreter /usr/bin/ansible-python
-        echo "ANSIBLE_PYTHON_INTERPRETER=/usr/bin/ansible-python" >> $GITHUB_ENV
+        echo "ANSIBLE_PYTHON_INTERPRETER=$ansible_python_interpreter" >> $GITHUB_ENV
 
     - name: Ensure boto3 and botocore are installed in Ansible Python environment
       run: |
-        ansible-python -m pip install boto3 botocore
+        ansible_python_interpreter=$(ansible -m setup localhost | grep '"ansible_python"' | awk -F '"' '{print $4}')
+        $ansible_python_interpreter -m pip install boto3 botocore
 
     - name: Debug:List Files for Verification
       run: |
@@ -65,5 +67,7 @@ jobs:
         cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
 
     - name: Run Ansible Inventory Command
+      env:
+        ANSIBLE_PYTHON_INTERPRETER: ${{ steps.verify-python-interpreter.outputs.ANSIBLE_PYTHON_INTERPRETER }}
       run: |
         ansible-inventory --inventory my_inventory.aws_ec2.yml --list
