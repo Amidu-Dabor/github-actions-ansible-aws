@@ -15,9 +15,9 @@ jobs:
     - uses: actions/checkout@v4.1.7
     
     - name: Set up Python 3.10.14
-      uses: cdqag/setup-python-env@1.0.0
+      uses: actions/setup-python@v5.1.0
       with:
-        use-local-python3-if-possible: true
+        check-latest: true
 
     - name: Cache Multiple Paths to Speedup Workflow Execution Time
       id: cache-step
