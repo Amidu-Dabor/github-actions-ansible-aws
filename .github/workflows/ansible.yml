@@ -27,8 +27,8 @@ jobs:
           ~/cache/
           ~/.ansible/
         key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-ansible-
+        # restore-keys: |
+        #   ${{ runner.os }}-ansible-
 
     - name: Install Ansible and Python Libraries (AWS SDKs)
       if: steps.cache-step.outputs.cache-hit != 'true'
@@ -57,7 +57,7 @@ jobs:
       run: |
         ${{ env.ANSIBLE_PYTHON_INTERPRETER }} -m pip install boto3 botocore
 
-    - name: Debug: List Files for Verification
+    - name: Debug:List Files for Verification
       run: |
         ls -l
         ls -l ~/cache
