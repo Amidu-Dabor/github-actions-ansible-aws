@@ -55,17 +55,17 @@ jobs:
 
     - name: Write SSH key to file
       run: |
-        echo "${{ secrets.ANSIBLE_SSH_KEY }}" | tr -d '\r' > mysshkeyfile
+        echo "${{ secrets.ANSIBLE_SSH_KEY }}" | tr -d '\r' > sshkeyfile
         chmod 400 sshkeyfile
 
     - name: Add SSH Key to Agent
       run: |
         eval "$(ssh-agent -s)"
-        ssh-add mysshkeyfile
+        ssh-add sshkeyfile
 
     - name: Debug:Verify SSH Connectivity
       run: |
-        ssh -v -i mysshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
+        ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
 
     - name: Run Ansible Playbook
       run: |
