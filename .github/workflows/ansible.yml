@@ -56,8 +56,9 @@ jobs:
 
     - name: Write SSH key to file
       run: |
-        echo "${{ secrets.ANSIBLE_SSH_KEY }}" | tr -d '\r' > sshkeyfile
+        Set-Content -Path sshkeyfile -Value "${{ secrets.ANSIBLE_SSH_KEY }}"
         chmod 400 sshkeyfile
+      # echo "${{ secrets.ANSIBLE_SSH_KEY }}" > sshkeyfile
 
     - name: Add SSH Key to Agent
       run: |
