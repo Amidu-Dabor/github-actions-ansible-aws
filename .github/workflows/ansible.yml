@@ -19,7 +19,7 @@ jobs:
         uses: actions/cache@v4.0.2
         with:
           path: |
-            ~/.cache/
+            ~/cache/
             ~/.ansible/
           key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
 
@@ -39,9 +39,23 @@ jobs:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
 
-      # - name: Verify Ansible Python Interpreter
-      #   run: ansible -m setup localhost | grep ansible_python
+      - name: Verify Ansible Python Interpreter
+        run: |
+          ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
+          echo "Ansible is using Python interpreter: $ansible_python_interpreter"
+
+      - name: Ensure boto3 and botocore are installed in Ansible Python environment
+        run: |
+          ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
+          $ansible_python_interpreter -m pip install boto3 botocore
+  
+      - name: Debug:List Files for Verification
+        run: |
+          ls -l
+          ls -l ~/cache
+          ls -l ~/.ansible
+          cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
 
       - name: Run Ansible Inventory Command
-        run: ansible-inventory --inventory https://github.com/Amidu-Dabor/github-actions-ansible-aws/blob/2fabd31137d4c2a6e85ef5b00dbebde032085d05/my_inventory.aws_ec2.yml --list
+        run: ansible-inventory --inventory my_inventory.aws_ec2.yml --list
 ...
