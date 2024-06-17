@@ -1,5 +1,3 @@
----
-
 name: Ansible Deployment
 
 on:
@@ -19,7 +17,7 @@ jobs:
     - name: Set up Python 3.10.14
       uses: actions/setup-python@v4
       with:
-        python-version: /opt/hostedtoolcache/Python/3.10.14/x64
+        python-version: '3.10.14'
 
     - name: Cache Multiple Paths to Speedup Workflow Execution Time
       id: cache-step
@@ -59,7 +57,7 @@ jobs:
       run: |
         ${{ env.ANSIBLE_PYTHON_INTERPRETER }} -m pip install boto3 botocore
 
-    - name: Debug:List Files for Verification
+    - name: Debug: List Files for Verification
       run: |
         ls -l
         ls -l ~/cache
@@ -69,5 +67,3 @@ jobs:
     - name: Run Ansible Inventory Command
       run: |
         ansible-inventory --inventory my_inventory.aws_ec2.yml --list
-        
-...
