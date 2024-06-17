@@ -6,6 +6,7 @@ on:
 
 env:
   ANSIBLE_HOST_KEY_CHECKING: false
+  ANSIBLE_REMOTE_USER: ubuntu
 
 permissions:
   id-token: write
