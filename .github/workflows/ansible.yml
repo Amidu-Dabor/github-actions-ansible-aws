@@ -61,10 +61,10 @@ jobs:
         chmod 400 mysshkeyfile
       # Set-Content -Path mysshkeyfile -Value '${{ secrets.ANSIBLE_SSH_KEY }}'
 
-    # - name: Debug:Verify SSH Connectivity
-    #   shell: pwsh
-    #   run: |
-    #     ssh -i mysshkeyfile -o StrictHostKeyChecking=no ec2-52-91-229-234.compute-1.amazonaws.com 'echo "SSH connection established"'
+    - name: Debug:Verify SSH Connectivity
+      shell: pwsh
+      run: |
+        ssh -i mysshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
 
     - name: Run Ansible Playbook
       shell: pwsh
