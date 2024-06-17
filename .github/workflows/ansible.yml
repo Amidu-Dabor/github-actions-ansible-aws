@@ -65,37 +65,11 @@ jobs:
         eval "$(ssh-agent -s)"
         ssh-add sshkeyfile
 
-    - name: Loop through Instances and SSH Connection
+    - name: Debug:Verify SSH Connectivity
       run: |
-        # Loop through instances in instances.yaml
-        while IFS= read -r line; do
-            instance_id=$(echo "$line" | jq -r '.instance_id')
-            public_ip=$(echo "$line" | jq -r '.public_ip // empty')
-            private_ip=$(echo "$line" | jq -r '.private_ip // empty')
-    
-            if [ -n "$public_ip" ]; then
-              ip_address="$public_ip"
-            else
-              ip_address="$private_ip"
-            fi
-    
-            echo "Connecting to instance: $ip_address"
-    
-            # SSH connection using the determined IP address
-            ssh -v -i sshkeyfile -o StrictHostKeyChecking=no "ubuntu@$ip_address" 'echo "SSH connection established"'
-    
-            # Run your ansible-playbook command for each instance
-            ansible-playbook --become --inventory my_inventory.aws_ec2.yml --private-key sshkeyfile ansible-playbook.yml
-    
-            echo "------------------------------------------------"
-        done < instances.yaml
+        ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ubuntu@54.234.26.80 'echo "SSH connection established"'
+      # ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
 
-
-    # - name: Debug:Verify SSH Connectivity
-    #   run: |
-    #     ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ubuntu@54.234.26.80 'echo "SSH connection established"'
-    #   # ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
-
-    # - name: Run Ansible Playbook
-    #   run: |
-    #     ansible-playbook --become --inventory my_inventory.aws_ec2.yml --private-key sshkeyfile ansible-playbook.yml
+    - name: Run Ansible Playbook
+      run: |
+        ansible-playbook --become --inventory my_inventory.aws_ec2.yml --private-key sshkeyfile ansible-playbook.yml
