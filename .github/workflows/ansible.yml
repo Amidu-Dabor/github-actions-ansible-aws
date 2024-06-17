@@ -72,4 +72,4 @@ jobs:
 
     - name: Run Ansible Playbook
       run: |
-        ansible-playbook --inventory my_inventory.aws_ec2.yml --private-key sshkeyfile ansible-playbook.yml
+        ansible-playbook --become --inventory my_inventory.aws_ec2.yml --private-key sshkeyfile ansible-playbook.yml
