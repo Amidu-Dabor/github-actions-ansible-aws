@@ -50,23 +50,23 @@ jobs:
         cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
 
     - name: Run Ansible Inventory Command
-      shell: pwsh
       run: |
         ansible-inventory --inventory my_inventory.aws_ec2.yml --list
 
     - name: Write SSH key to file
-      shell: pwsh
       run: |
-        echo "${{ secrets.ANSIBLE_SSH_KEY }}" > mysshkeyfile
+        echo "${{ secrets.ANSIBLE_SSH_KEY }}" | tr -d '\r' > mysshkeyfile
         chmod 400 mysshkeyfile
-      # Set-Content -Path mysshkeyfile -Value '${{ secrets.ANSIBLE_SSH_KEY }}'
+
+    - name: Add SSH Key to Agent
+      run: |
+        eval "$(ssh-agent -s)"
+        ssh-add mysshkeyfile
 
     - name: Debug:Verify SSH Connectivity
-      shell: pwsh
       run: |
-        ssh -i mysshkeyfile -o StrictHostKeyChecking=no 172.31.83.51 'echo "SSH connection established"'
+        ssh -v -i mysshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
 
     - name: Run Ansible Playbook
-      shell: pwsh
       run: |
         ansible-playbook --inventory my_inventory.aws_ec2.yml --private-key mysshkeyfile ansible-playbook.yml
