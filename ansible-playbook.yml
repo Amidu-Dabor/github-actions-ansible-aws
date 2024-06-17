@@ -1,6 +1,6 @@
 ---
 - name: Set up EC2 Instances
-  hosts: us-east-1-sshkey
+  hosts: us-east-1-keypair
   tasks:
     - name: Install Python3-pip
       apt:
