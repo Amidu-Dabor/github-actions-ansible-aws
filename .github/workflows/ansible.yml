@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+env:
+  ANSIBLE_HOST_KEY_CHECKING: false
+
 permissions:
   id-token: write
   contents: read
@@ -51,7 +54,12 @@ jobs:
       run: |
         ansible-inventory --inventory my_inventory.aws_ec2.yml --list
 
+    - name: Write SSH key to file
+      shell: pwsh
+      run: |
+        Set-Content -Path mykeyfile -Value '${{ secrets.ANSIBLE_SSH_KEY }}'
+
     - name: Run Ansible Playbook
       shell: pwsh
       run: |
-        ansible-playbook --inventory my_inventory.aws_ec2.yml ansible-playbook.yml
+        ansible-playbook --inventory my_inventory.aws_ec2.yml --private-key mykeyfile ansible-playbook.yml
