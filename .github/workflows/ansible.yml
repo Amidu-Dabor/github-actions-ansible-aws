@@ -50,3 +50,8 @@ jobs:
       shell: pwsh
       run: |
         ansible-inventory --inventory my_inventory.aws_ec2.yml --list
+
+    - name: Run Ansible Playbook
+      shell: pwsh
+      run: |
+        ansible-playbook --inventory my_inventory.aws_ec2.yml ansible-playbook.yml
