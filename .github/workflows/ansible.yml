@@ -27,6 +27,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y python3.10 python3-pip
+        python3.10 -m pip install --upgrade pip
 
     - name: Install Ansible and Python Libraries (AWS SDKs)
       if: steps.cache-step.outputs.cache-hit != 'true'
@@ -47,13 +48,14 @@ jobs:
     - name: Verify Ansible Python Interpreter
       id: ansible-python-interpreter
       run: |
-        ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
+        ansible_python_interpreter=$(ansible -m setup localhost | grep '"ansible_python"' | awk -F '"' '{print $4}')
         echo "Ansible is using Python interpreter: $ansible_python_interpreter"
-        echo "ANSIBLE_PYTHON_INTERPRETER=$ansible_python_interpreter" >> $GITHUB_ENV
+        sudo ln -sf $ansible_python_interpreter /usr/bin/ansible-python
+        echo "ANSIBLE_PYTHON_INTERPRETER=/usr/bin/ansible-python" >> $GITHUB_ENV
 
     - name: Ensure boto3 and botocore are installed in Ansible Python environment
       run: |
-        ${{ env.ANSIBLE_PYTHON_INTERPRETER }} -m pip install boto3 botocore
+        ansible-python -m pip install boto3 botocore
 
     - name: Debug:List Files for Verification
       run: |
