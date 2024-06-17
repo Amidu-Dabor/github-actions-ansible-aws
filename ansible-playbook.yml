@@ -6,4 +6,5 @@
     - name: Install Python3-pip
       apt:
         name: python3-pip
-        state: present
+        state: "present"
+        update_cache: true
