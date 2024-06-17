@@ -1,7 +1,7 @@
 ---
 # Can be accessed via ansible.builtin.apt - Manages apt-packages
 - name: Set up EC2 Instances
-  hosts: AnsibleKey # The Ansible key group name
+  hosts: us-east-1-key # The Ansible key group name
   tasks:
     - name: Install Python3-pip
       apt:
