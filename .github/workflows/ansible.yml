@@ -13,11 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4.1.7
+
+    - name: Ansible python environment variable
+      run: ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
     
     - name: Set up Python 3.10.14
       uses: actions/setup-python@v5.1.0
       with:
-        run: ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
         python-version: ansible_python_interpreter
 
     - name: Cache Multiple Paths to Speedup Workflow Execution Time
