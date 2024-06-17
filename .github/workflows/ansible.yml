@@ -1,4 +1,5 @@
 ---
+
 name: Ansible Deployment
 
 on:
@@ -13,49 +14,60 @@ jobs:
   ansible-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.7
-      - name: Cache Multiple Paths to Speedup Workflow Execution Time
-        id: cache-step
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/cache/
-            ~/.ansible/
-          key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
+    - uses: actions/checkout@v4.1.7
 
-      - name: Install Ansible and Python Libraries (AWS SDKs)
-        if: steps.cache-step.outputs.cache-hit != 'true'
-        run: |
-          pip3 install ansible boto3 botocore
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
-      - name: Install Ansible Galaxy Collection (amazon.aws)
-        if: steps.cache-step.outputs.cache-hit != 'true'
-        run: |
-          ansible-galaxy collection install amazon.aws --force
+    - name: Cache Multiple Paths to Speedup Workflow Execution Time
+      id: cache-step
+      uses: actions/cache@v4.0.2
+      with:
+        path: |
+          ~/cache/
+          ~/.ansible/
+        key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ansible-
 
-      - name: Authenticate to AWS Using OpenID Connect
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: us-east-1
-          role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
+    - name: Install Ansible and Python Libraries (AWS SDKs)
+      if: steps.cache-step.outputs.cache-hit != 'true'
+      run: |
+        pip3 install ansible boto3 botocore
 
-      - name: Verify Ansible Python Interpreter
-        run: |
-          ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
-          echo "Ansible is using Python interpreter: $ansible_python_interpreter"
+    - name: Install Ansible Galaxy Collection (amazon.aws)
+      if: steps.cache-step.outputs.cache-hit != 'true'
+      run: |
+        ansible-galaxy collection install amazon.aws --force
 
-      - name: Ensure boto3 and botocore are installed in Ansible Python environment
-        run: |
-          ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
-          $ansible_python_interpreter -m pip install boto3 botocore
-  
-      - name: Debug:List Files for Verification
-        run: |
-          ls -l
-          ls -l ~/cache
-          ls -l ~/.ansible
-          cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
+    - name: Authenticate to AWS Using OpenID Connect
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
 
-      - name: Run Ansible Inventory Command
-        run: ansible-inventory --inventory my_inventory.aws_ec2.yml --list
+    - name: Verify Ansible Python Interpreter
+      id: ansible-python-interpreter
+      run: |
+        ansible_python_interpreter=$(ansible -m setup localhost | grep ansible_python | awk -F '"' '{print $4}')
+        echo "Ansible is using Python interpreter: $ansible_python_interpreter"
+        echo "ANSIBLE_PYTHON_INTERPRETER=$ansible_python_interpreter" >> $GITHUB_ENV
+
+    - name: Ensure boto3 and botocore are installed in Ansible Python environment
+      run: |
+        ${{ env.ANSIBLE_PYTHON_INTERPRETER }} -m pip install boto3 botocore
+
+    - name: Debug:List Files for Verification
+      run: |
+        ls -l
+        ls -l ~/cache
+        ls -l ~/.ansible
+        cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
+
+    - name: Run Ansible Inventory Command
+      run: |
+        ansible-inventory --inventory my_inventory.aws_ec2.yml --list
+        
 ...
