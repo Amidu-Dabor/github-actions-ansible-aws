@@ -19,7 +19,7 @@ jobs:
     - name: Set up Python 3.10.14
       uses: actions/setup-python@v4
       with:
-        python-version: 3.10.14
+        python-version: /opt/hostedtoolcache/Python/3.10.14/x64
 
     - name: Cache Multiple Paths to Speedup Workflow Execution Time
       id: cache-step
