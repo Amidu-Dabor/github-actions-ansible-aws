@@ -57,9 +57,14 @@ jobs:
     - name: Write SSH key to file
       shell: pwsh
       run: |
-        Set-Content -Path mysshkeyfile -Value '${{ secrets.ANSIBLE_SSH_KEY }}'
         echo "${{ secrets.ANSIBLE_SSH_KEY }}" > mysshkeyfile
         chmod 400 mysshkeyfile
+      # Set-Content -Path mysshkeyfile -Value '${{ secrets.ANSIBLE_SSH_KEY }}'
+
+    - name: Debug:Verify SSH Connectivity
+      shell: pwsh
+      run: |
+        ssh -i mysshkeyfile -o StrictHostKeyChecking=no ec2-user@ec2-52-91-229-234.compute-1.amazonaws.com 'echo "SSH connection established"'
 
     - name: Run Ansible Playbook
       shell: pwsh
