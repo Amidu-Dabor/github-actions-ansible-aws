@@ -26,7 +26,7 @@ jobs:
     - name: Install Ansible and Python Libraries (AWS SDKs)
       if: steps.cache-step.outputs.cache-hit != 'true'
       run: |
-        pip3 -m install ansible boto3 botocore
+        pip3 install ansible boto3 botocore
 
     - name: Install Ansible Galaxy Collection (amazon.aws)
       if: steps.cache-step.outputs.cache-hit != 'true'
