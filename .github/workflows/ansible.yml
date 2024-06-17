@@ -39,18 +39,6 @@ jobs:
         aws-region: us-east-1
         role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
 
-    - name: Verify Ansible Python Interpreter
-      id: verify-python-interpreter
-      run: |
-        ansible_python_interpreter=$(ansible -m setup localhost | grep '"ansible_python"' | awk -F '"' '{print $4}')
-        echo "Ansible is using Python interpreter: $ansible_python_interpreter"
-        echo "ANSIBLE_PYTHON_INTERPRETER=$ansible_python_interpreter" >> $GITHUB_ENV
-
-    - name: Ensure boto3 and botocore are installed in Ansible Python environment
-      run: |
-        ansible_python_interpreter=$(ansible setup localhost | grep '"ansible_python"' | awk -F '"' '{print $4}')
-        $ansible_python_interpreter -m pip install boto3 botocore
-
     - name: Debug:List Files for Verification
       run: |
         ls -l
