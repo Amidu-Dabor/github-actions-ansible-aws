@@ -8,3 +8,9 @@
         name: python3-pip
         state: "present"
         update_cache: true
+        
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: "present"
+        update_cache: true
