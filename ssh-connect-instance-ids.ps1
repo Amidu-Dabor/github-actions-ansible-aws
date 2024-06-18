@@ -10,12 +10,11 @@ $instances = Get-EC2Instance
 # Function to create SSH private key file from GitHub Secrets
 function CreateSSHKeyFile {
     param (
-        $sshKeySecretName,
         [string]$sshKeyFilePath
     )
 
     # Fetch SSH key from GitHub Secrets
-    $sshPrivateKey = $env:GITHUB_$sshKeySecretName
+    $sshPrivateKey = $env:GITHUB_ANSIBLE_SSH_KEY
 
     # Write SSH key to file
     Set-Content -Path $sshKeyFilePath -Value $sshPrivateKey
@@ -59,7 +58,7 @@ foreach ($instance in $instances) {
         Write-Output "Connecting to instance: $publicIpAddress"
 
         # Call function to create SSH key file from GitHub Secrets
-        CreateSSHKeyFile -sshKeySecretName ANSIBLE_SSH_KEY -sshKeyFilePath $sshKeyFilePath
+        CreateSSHKeyFile -sshKeyFilePath $sshKeyFilePath
 
         # Call function to establish SSH connection and run Ansible playbook
         ConnectToInstance -publicIpAddress $publicIpAddress -sshKeyFilePath $sshKeyFilePath -ansiblePlaybookPath "ansible-playbook.yml"
