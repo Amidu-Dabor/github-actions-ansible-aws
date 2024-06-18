@@ -39,8 +39,9 @@ function ConnectToInstance {
         Invoke-Expression -Command $ansibleCommand
     }
     finally {
-        # Clean up the SSH key file
-        Remove-Item $sshKeyFilePath
+        # Remove read-only attribute and clean up the SSH key file
+        Set-ItemProperty -Path $sshKeyFilePath -Name IsReadOnly -Value $false
+        Remove-Item $sshKeyFilePath -Force
     }
 }
 
