@@ -16,9 +16,12 @@ function CreateSSHKeyFile {
     # Fetch SSH key from GitHub Secrets
     $sshPrivateKey = $env:GITHUB_ANSIBLE_SSH_KEY
 
-    # Write SSH key to file
+    # Write SSH key to a temporary file
     Set-Content -Path $sshKeyFilePath -Value $sshPrivateKey
     Set-ItemProperty -Path $sshKeyFilePath -Name IsReadOnly -Value $true
+
+    # Set correct permissions for the SSH key file (equivalent to chmod 600)
+    icacls $sshKeyFilePath /inheritance:r /grant:r "$($env:USERNAME):(R,W)"
 }
 
 # Function to establish SSH connection to an instance
