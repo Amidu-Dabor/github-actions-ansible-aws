@@ -5,7 +5,7 @@
 Import-Module AWSPowerShell
 
 # List EC2 instances
-$instances = Get-EC2Instance
+$instances = (Get-EC2Instance).instances
 
 # Function to create SSH private key file from GitHub Secrets
 function CreateSSHKeyFile {
