@@ -13,36 +13,51 @@ Initialize-AWSDefaultConfiguration -AccessKey $env:AWS_ACCESS_KEY_ID -SecretKey 
 # List EC2 instances
 $instances = Get-EC2Instance
 
-# Loop through each instance
+# Function to establish SSH connection to an instance
+function ConnectToInstance {
+    param (
+        [string]$publicIpAddress,
+        [string]$privateKey,
+        [string]$ansiblePlaybookPath
+    )
+
+    # Generate a temporary key file
+    $tempKeyFile = "temp-ssh-key.pem"
+    Set-Content -Path $tempKeyFile -Value $privateKey
+    Set-ItemProperty -Path $tempKeyFile -Name IsReadOnly -Value $true
+
+    try {
+        # Perform SSH connection using the temporary key file
+        $sshCommand = "ssh -i $tempKeyFile -o StrictHostKeyChecking=no ubuntu@$publicIpAddress 'echo \"SSH connection established\"'"
+        Invoke-Expression -Command $sshCommand
+
+        # Run Ansible playbook using the temporary key file
+        $ansibleCommand = "ansible-playbook --become --inventory my_inventory.aws_ec2.yml --private-key $tempKeyFile $ansiblePlaybookPath"
+        Invoke-Expression -Command $ansibleCommand
+    }
+    finally {
+        # Clean up the temporary key file
+        Remove-Item $tempKeyFile
+    }
+}
+
+# Main script logic
 foreach ($instance in $instances) {
     $instanceId = $instance.InstanceId
     $publicIpAddress = $instance.PublicIpAddress
-    $privateIpAddress = $instance.PrivateIpAddress
+    $privateKey = $instance.KeyPair.KeyMaterial  # Assuming KeyMaterial is accessible directly
 
     Write-Output "Instance ID: $instanceId"
     Write-Output "Public IP Address: $publicIpAddress"
-    Write-Output "Private IP Address: $privateIpAddress"
 
-    # Retrieve key pair for the instance
-    $keyName = $instance.KeyName
-    $keyPair = Get-EC2KeyPair -KeyName $keyName
+    # Check if instance has a public IP address
+    if (![string]::IsNullOrEmpty($publicIpAddress)) {
+        Write-Output "Connecting to instance: $publicIpAddress"
 
-    if ($keyPair -ne $null) {
-        # Save the private key material to a temporary file
-        $keyMaterial = $keyPair.KeyMaterial
-        $tempKeyFile = "C:\path\$keyName.pem"
-        $keyMaterial | Out-File -Encoding ascii -FilePath $tempKeyFile
-
-        # Set permissions on the private key file
-        Set-ItemProperty -Path $tempKeyFile -Name IsReadOnly -Value $true
-
-        # Perform SSH connection using the private key
-        Invoke-SSHCommand -KeyFile $tempKeyFile -Username "ubuntu" -Hostname $publicIpAddress -Command "echo 'SSH connection established'"
-
-        # Clean up the temporary key file
-        Remove-Item $tempKeyFile
+        # Call function to establish SSH connection and run Ansible playbook
+        ConnectToInstance -publicIpAddress $publicIpAddress -privateKey $privateKey -ansiblePlaybookPath "ansible-playbook.yml"
     } else {
-        Write-Output "Key pair '$keyName' not found or inaccessible."
+        Write-Output "Instance $instanceId does not have a public IP address."
     }
 
     Write-Output "------------------------------------------------"
