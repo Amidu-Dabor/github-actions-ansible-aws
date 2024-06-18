@@ -1,5 +1,5 @@
 # Install AWSPowerShell module if not already installed
-Install-Module -Name AWSPowerShell -Force -Verbose
+# Install-Module -Name AWSPowerShell -Force -Verbose
 
 # Import AWSPowerShell module
 Import-Module AWSPowerShell
