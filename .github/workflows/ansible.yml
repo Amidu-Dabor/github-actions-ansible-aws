@@ -53,4 +53,5 @@ jobs:
       - name: Run PowerShell Script to Connect to EC2 Instances and Execute Ansible
         shell: pwsh
         run: |
+          Install-Module -Name AWSPowerShell -Force -Verbose
           ./ssh-connect-instance-ids.ps1
