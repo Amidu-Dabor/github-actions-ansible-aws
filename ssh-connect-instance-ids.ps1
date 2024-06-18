@@ -15,7 +15,7 @@ function CreateSSHKeyFile {
     )
 
     # Fetch SSH key from GitHub Secrets
-    $sshPrivateKey = $env:$sshKeySecretName
+    $sshPrivateKey = $Env:$sshKeySecretName
 
     # Write SSH key to file
     Set-Content -Path $sshKeyFilePath -Value $sshPrivateKey
