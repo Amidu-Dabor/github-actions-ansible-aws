@@ -16,65 +16,41 @@ jobs:
   ansible-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.1.7
 
-    - name: Cache Multiple Paths to Speedup Workflow Execution Time
-      id: cache-step
-      uses: actions/cache@v4.0.2
-      with:
-        path: |
-          ~/
-          ~/.ansible/
-        key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
+      - name: Cache Multiple Paths to Speedup Workflow Execution Time
+        id: cache-step
+        uses: actions/cache@v4.0.2
+        with:
+          path: |
+            ~/
+            ~/.ansible/
+          key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}-${{ github.sha }}
 
-    - name: Install Ansible and Python Libraries (AWS SDKs)
-      if: steps.cache-step.outputs.cache-hit != 'true'
-      run: |
-        pip3 install ansible boto3 botocore
+      - name: Install Ansible and Python Libraries (AWS SDKs)
+        if: steps.cache-step.outputs.cache-hit != 'true'
+        run: |
+          pip3 install ansible boto3 botocore
 
-    - name: Install Ansible Galaxy Collection (amazon.aws)
-      if: steps.cache-step.outputs.cache-hit != 'true'
-      run: |
-        ansible-galaxy collection install amazon.aws --force
+      - name: Install Ansible Galaxy Collection (amazon.aws)
+        if: steps.cache-step.outputs.cache-hit != 'true'
+        run: |
+          ansible-galaxy collection install amazon.aws --force
 
-    - name: Authenticate to AWS Using OpenID Connect
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: us-east-1
-        role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
+      - name: Authenticate to AWS Using OpenID Connect
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::295793222430:role/github-actions-ansible-aws-oidc
 
-    - name: Debug:List Files for Verification
-      run: |
-        ls -l
-        ls -l ~/ || echo "Cache directory not found"
-        ls -l ~/.ansible/
-        cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
+      - name: Debug:List Files for Verification
+        run: |
+          ls -l
+          ls -l ~/ || echo "Cache directory not found"
+          ls -l ~/.ansible/
+          cat my_inventory.aws_ec2.yml  # Check if the inventory file is accessible and in the correct format
 
-    - name: Run Ansible Inventory Command
-      run: |
-        ansible-inventory --inventory my_inventory.aws_ec2.yml --list
-
-    # - name: Create a new file and write SSH key to file
-    #   run: |
-    #     echo "${{ secrets.ANSIBLE_SSH_KEY }}" > sshkeyfile
-    #     chmod 400 sshkeyfile
-    #   # Set-Content -Path sshkeyfile -Value "${{ secrets.ANSIBLE_SSH_KEY }}"
-
-    - name: Add SSH Key to Agent
-      run: |
-        eval "$(ssh-agent -s)"
-        ssh-add sshkeyfile
-
-    - name: Run PowerShell Script to read all instance ids to SSH connect
-      shell: pwsh 
-      run: |
-        ./ssh-connect-instance-ids.ps1
-
-    # - name: Debug:Verify SSH Connectivity
-    #   run: |
-    #     ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ubuntu@54.234.26.80 'echo "SSH connection established"'
-    #   # ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
-
-    - name: Run Ansible Playbook
-      run: |
-        ansible-playbook --become --inventory my_inventory.aws_ec2.yml --private-key sshkeyfile ansible-playbook.yml
+      - name: Run PowerShell Script to Connect to EC2 Instances and Execute Ansible
+        shell: pwsh
+        run: |
+          ./ssh-connect-instance-ids.ps1
