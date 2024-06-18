@@ -31,7 +31,7 @@ function ConnectToInstance {
 
     try {
         # Perform SSH connection using the SSH key file
-        $sshCommand = "ssh -v -i $sshKeyFilePath -o StrictHostKeyChecking=no ubuntu@$publicIpAddress echo "SSH connection established"
+        $sshCommand = "ssh -v -i $sshKeyFilePath -o StrictHostKeyChecking=no ubuntu@$publicIpAddress 'echo `"SSH connection established`"'
         Invoke-Expression -Command $sshCommand
 
         # Run Ansible playbook using the SSH key file
