@@ -65,10 +65,15 @@ jobs:
         eval "$(ssh-agent -s)"
         ssh-add sshkeyfile
 
-    - name: Debug:Verify SSH Connectivity
+    - name: Run PowerShell Script to read all instance ids to SSH connect
+      shell: pwsh 
       run: |
-        ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ubuntu@54.234.26.80 'echo "SSH connection established"'
-      # ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
+        ./ssh-connect-instance-ids.ps1
+
+    # - name: Debug:Verify SSH Connectivity
+    #   run: |
+    #     ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ubuntu@54.234.26.80 'echo "SSH connection established"'
+    #   # ssh -v -i sshkeyfile -o StrictHostKeyChecking=no ec2-54-234-26-80.compute-1.amazonaws.com 'echo "SSH connection established"'
 
     - name: Run Ansible Playbook
       run: |
