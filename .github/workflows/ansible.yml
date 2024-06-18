@@ -54,11 +54,11 @@ jobs:
       run: |
         ansible-inventory --inventory my_inventory.aws_ec2.yml --list
 
-    - name: Create a new file and write SSH key to file
-      run: |
-        echo "${{ secrets.ANSIBLE_SSH_KEY }}" > sshkeyfile
-        chmod 400 sshkeyfile
-      # Set-Content -Path sshkeyfile -Value "${{ secrets.ANSIBLE_SSH_KEY }}"
+    # - name: Create a new file and write SSH key to file
+    #   run: |
+    #     echo "${{ secrets.ANSIBLE_SSH_KEY }}" > sshkeyfile
+    #     chmod 400 sshkeyfile
+    #   # Set-Content -Path sshkeyfile -Value "${{ secrets.ANSIBLE_SSH_KEY }}"
 
     - name: Add SSH Key to Agent
       run: |
